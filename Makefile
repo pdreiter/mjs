@@ -3,8 +3,8 @@ SRCPATH = src
 BUILD_DIR = build
 
 RD ?= docker run -v $(CURDIR):$(CURDIR) --user=$(shell id -u):$(shell id -g) -w $(CURDIR)
-DOCKER_GCC ?= $(RD) mgos/gcc
-DOCKER_CLANG ?= $(RD) mgos/clang
+DOCKER_GCC = clang
+DOCKER_CLANG = clang
 
 include $(SRCPATH)/mjs_sources.mk
 
@@ -81,13 +81,13 @@ CFLAGS += $(COMMON_CFLAGS)
 # NOTE: we compile straight from sources, not from the single amalgamated file,
 # in order to make sure that all sources include the right headers
 $(PROG): $(TOP_MJS_SOURCES) $(TOP_COMMON_SOURCES) $(TOP_HEADERS) $(BUILD_DIR)
-	$(DOCKER_CLANG) clang $(CFLAGS) $(TOP_MJS_SOURCES) $(TOP_COMMON_SOURCES) -o $(PROG)
+	clang $(CFLAGS) $(TOP_MJS_SOURCES) $(TOP_COMMON_SOURCES) -o $(PROG)
 
 $(BUILD_DIR):
 	mkdir -p $@
 
 $(BUILD_DIR)/%.o: %.c $(TOP_HEADERS) mjs.h
-	$(CLANG) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	clang $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 COMMON_TEST_FLAGS = -W -Wall -I. -Isrc -g3 -O0 $(COMMON_CFLAGS) $< $(TESTUTIL_FILES) -DMJS_MEMORY_STATS
 
